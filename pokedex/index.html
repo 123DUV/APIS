@@ -12,16 +12,21 @@
 <body class="p-4">
     <button type="button" class="btn btn-dark" onclick="consumoAPI()">Cargar</button>
     <div class="row m-0 p-0 mt-2">
-        <div id="contentBotones" class="col-2 m-0 p-2 border">
+
+    </div>
+    <div class="col m-0 p-2 border text-center">
+        <h2 id="nombrePokemon">----------</h2>
+        <img id="imagenPokemon"
+            src=""
+            alt="" height="300">
+        <div id="contentBotones" class="col-auto m-5 p-2 border">
         </div>
-        <div class="col m-0 p-2 border text-center">
-            <h2 id="nombrePokemon">xxxxxxxxxxx</h2>
-            <img id="imagenPokemon"
-                src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/132.svg"
-                alt="" height="300">
-        </div>
+        <button type="button" class="btn btn-dark float-right" onclick="siguiente()">Anterior</button>
+        <button type="button" class="btn btn-dark float-right" onclick="siguiente()">Siguiente</button>
+        
     </div>
     <script type="text/javascript" src="./js/myScript.js"></script>
+    
 </body>
 
 </html>
