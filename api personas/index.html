@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>personas</title>
+
+</head>
+
+<body>
+
+    <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#modalInsertar">
+        Agregar
+    </button>
+    <table class="table table-bordered">
+        <thead class="bg-dark text-light text-center">
+            <th>N°</th>
+            <th>Cedula</th>
+            <th>Nombres</th>
+            <th>Apellidos</th>
+            <th>Telefonos</th>
+
+            <th>Direccion</th>
+            <th>Email</th>
+        </thead>
+        <tbody class="tbody">
+
+        </tbody>
+    </table>
+    <!-- Button trigger modal -->
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalInsertar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Insertar Persona</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formInsertar" action="#">
+                        <label class="form-label" for="cedulaInsertar">Cedula</label>
+                        <input id="cedulaInsertar" class="form-control" type="number" name="cedula" required><!-- si se mandan los datos es el q se va a  usar, los names deben ser exactamente igual a los datos de la api, son identificadores los name-->
+
+                        <label class="form-label" for="nombresInsertar">Nombre</label>
+                        <input id="nombresInsertar" class="form-control" type="text" name="nombres" required>
+
+                        <label class="form-label" for="apellidosInsertar">Apellidos</label>
+                        <input id="apellidosInsertar" class="form-control" type="text" name="apellidos" required>
+
+                        <label class="form-label" for="telefonoInsertar">Telefono</label>
+                        <input id="telefonoInsertar" class="form-control" type="text" name="telefono" required>
+
+                        <label class="form-label" for="direccionInsertar">Direccion</label>
+                        <input id="direccionInsertar" class="form-control" type="text" name="direccion" required>
+
+                        <label class="form-label" for="emailInsertar">Email</label>
+                        <input id="emailInsertar" class="form-control" type="email" name="email" required>
+
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit"class="btn btn-primary">Insertar</button>
+                    </form>
+
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+
+
+    <script src="./js/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+        
+
+
+</body>
+
+</html>
