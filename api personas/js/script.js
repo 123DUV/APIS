@@ -13,12 +13,12 @@ function consumoAPI() {
         .then(respuesta => respuesta.json())
         .then(data => {
             console.log(data);
-
+            tbody.innerHTML ='';
             for (let i = 0; i < data.length; i++) {
 
 
-
-
+                
+                
                 tbody.innerHTML += `
                 <tr>
                 <td>${i}</td>
@@ -29,7 +29,10 @@ function consumoAPI() {
                 <td>${data[i].direccion}</td>
                 <td>${data[i].email}</td>
                 <td>
-                <button onclick="eliminarPersona(${data[i].cedula})"> Z </button>
+                <button onclick="eliminarPersona(${data[i].cedula})"> Elim... </button>
+                </td>
+                <td>
+                <button onclick="actualizar('${data[i].cedula}', '${data[i].nombres}', '${data[i].apellidos}', '${data[i].telefono}', '${data[i].direccion}', '${data[i].email}')">Act...</button>
                 </td>
                 </tr>
                 `
@@ -86,6 +89,7 @@ function insertar() {
         .then(resp => resp.json())
         .then(data => {
             console.log('la api responde con: ', data);
+            
             if (data.status) {
                 let myModal = new bootstrap.Modal(document.getElementById('modalInsertar'));
                 myModal.hide();
@@ -96,6 +100,31 @@ function insertar() {
             }
         });
 }
+
+function actualizar(cedula, nombres, apellidos, telefono, direccion, email){
+    let form = new FormData();
+    
+    form.append('cedula', cedula);
+    form.append('nombres', nombres);
+    form.append('apellidos', apellidos);
+    form.append('telefono', telefono);
+    form.append('direccion', direccion);
+    form.append('email', email);
+    let configuracion = {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: form
+    };
+    fetch('http://codetesthub.com/API/Actualizar.php', configuracion)
+        .then(resp => resp.json())
+        .then(data => {
+           
+            console.log('la api muestra',data);
+            
+
+        });
+}
+
 function eliminarPersona(cedula) {
     let form = new FormData();
     form.append('cedula', cedula);
