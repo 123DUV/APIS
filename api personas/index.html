@@ -73,6 +73,86 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="modalInsertar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Insertar Persona</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formInsertar" action="#">
+                        <label class="form-label" for="cedulaInsertar">Cedula</label>
+                        <input id="cedulaInsertar" class="form-control" type="number" name="cedula" required><!-- si se mandan los datos es el q se va a  usar, los names deben ser exactamente igual a los datos de la api, son identificadores los name-->
+
+                        <label class="form-label" for="nombresInsertar">Nombre</label>
+                        <input id="nombresInsertar" class="form-control" type="text" name="nombres" required>
+
+                        <label class="form-label" for="apellidosInsertar">Apellidos</label>
+                        <input id="apellidosInsertar" class="form-control" type="text" name="apellidos" required>
+
+                        <label class="form-label" for="telefonoInsertar">Telefono</label>
+                        <input id="telefonoInsertar" class="form-control" type="text" name="telefono" required>
+
+                        <label class="form-label" for="direccionInsertar">Direccion</label>
+                        <input id="direccionInsertar" class="form-control" type="text" name="direccion" required>
+
+                        <label class="form-label" for="emailInsertar">Email</label>
+                        <input id="emailInsertar" class="form-control" type="email" name="email" required>
+
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit"class="btn btn-primary">Insertar</button>
+                    </form>
+
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalAct" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Actualizar Persona</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formAct" action="#">
+                        <label class="form-label" for="cedulaAct">Cedula</label>
+                        <input id="cedulaAct" class="form-control" type="number" name="cedula" required><!-- si se mandan los datos es el q se va a  usar, los names deben ser exactamente igual a los datos de la api, son identificadores los name-->
+
+                        <label class="form-label" for="nombresAct">Nombre</label>
+                        <input id="nombresAct" class="form-control" type="text" name="nombres" required>
+
+                        <label class="form-label" for="apellidosAct">Apellidos</label>
+                        <input id="apellidosAct" class="form-control" type="text" name="apellidos" required>
+
+                        <label class="form-label" for="telefonoAct">Telefono</label>
+                        <input id="telefonoAct" class="form-control" type="text" name="telefono" required>
+
+                        <label class="form-label" for="direccionAct">Direccion</label>
+                        <input id="direccionAct" class="form-control" type="text" name="direccion" required>
+
+                        <label class="form-label" for="emailAct">Email</label>
+                        <input id="emailAct" class="form-control" type="email" name="email" required>
+
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit"class="btn btn-primary">Insertar</button>
+                    </form>
+
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+    
+    
 
 
     <script src="./js/script.js"></script>

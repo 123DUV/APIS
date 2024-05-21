@@ -1,5 +1,6 @@
 const tbody = document.querySelector('.tbody');
 const form = document.getElementById('formInsertar');
+const act = document.getElementById('formAct');
 
 
 consumoAPI();
@@ -101,6 +102,10 @@ function insertar() {
         });
 }
 
+act.addEventListener('submit', function (event) {
+    event.preventDefault();//detiene el envio del formulario
+    actualizar();
+});
 function actualizar(cedula, nombres, apellidos, telefono, direccion, email){
     let form = new FormData();
     
@@ -120,8 +125,9 @@ function actualizar(cedula, nombres, apellidos, telefono, direccion, email){
         .then(data => {
            
             console.log('la api muestra',data);
-            
-
+            let myModal = new bootstrap.Modal(document.getElementById('modalAct'));
+            myModal.show();
+            consumoAPI();
         });
 }
 
