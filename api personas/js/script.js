@@ -154,7 +154,7 @@ function eliminarPersona(cedula) {
         .then(resp => resp.json())
         .then(data => {
             console.log('la api muestra', data);
-
+            consumoAPI();
         });
 
 
