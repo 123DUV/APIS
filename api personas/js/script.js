@@ -14,12 +14,12 @@ function consumoAPI() {
         .then(respuesta => respuesta.json())
         .then(data => {
             console.log(data);
-            tbody.innerHTML ='';
+            tbody.innerHTML = '';
             for (let i = 0; i < data.length; i++) {
 
 
-                
-                
+
+
                 tbody.innerHTML += `
                 <tr>
                 <td>${i}</td>
@@ -33,7 +33,7 @@ function consumoAPI() {
                 <button onclick="eliminarPersona(${data[i].cedula})"> Elim... </button>
                 </td>
                 <td>
-                <button onclick="actualizar('${data[i].cedula}', '${data[i].nombres}', '${data[i].apellidos}', '${data[i].telefono}', '${data[i].direccion}', '${data[i].email}')">Act...</button>
+                <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#modalAct">Act...</button>
                 </td>
                 </tr>
                 `
@@ -90,7 +90,7 @@ function insertar() {
         .then(resp => resp.json())
         .then(data => {
             console.log('la api responde con: ', data);
-            
+
             if (data.status) {
                 let myModal = new bootstrap.Modal(document.getElementById('modalInsertar'));
                 myModal.hide();
@@ -106,15 +106,22 @@ act.addEventListener('submit', function (event) {
     event.preventDefault();//detiene el envio del formulario
     actualizar();
 });
-function actualizar(cedula, nombres, apellidos, telefono, direccion, email){
-    let form = new FormData();
-    
-    form.append('cedula', cedula);
-    form.append('nombres', nombres);
-    form.append('apellidos', apellidos);
-    form.append('telefono', telefono);
-    form.append('direccion', direccion);
-    form.append('email', email);
+function actualizar() {
+    let form = new FormData(act);
+
+    // const cedula = document.getElementById('cedulaAct').value;
+    // const nombres = document.getElementById('nombresAct').value;
+    // const apellidos = document.getElementById('apellidosAct').value;
+    // const telefono = document.getElementById('telefonoAct').value;
+    // const direccion = document.getElementById('direccionAct').value;
+    // const email = document.getElementById('emailAct').value;
+
+    // form.append('cedula', cedula);
+    // form.append('nombres', nombres);
+    // form.append('apellidos', apellidos);
+    // form.append('telefono', telefono);
+    // form.append('direccion', direccion);
+    // form.append('email', email);
     let configuracion = {
         method: 'POST',
         headers: { 'Accept': 'application/json' },
@@ -123,10 +130,10 @@ function actualizar(cedula, nombres, apellidos, telefono, direccion, email){
     fetch('http://codetesthub.com/API/Actualizar.php', configuracion)
         .then(resp => resp.json())
         .then(data => {
-           
-            console.log('la api muestra',data);
+
+            console.log('la api muestra', data);
             let myModal = new bootstrap.Modal(document.getElementById('modalAct'));
-            myModal.show();
+            myModal.hide();
             consumoAPI();
         });
 }
@@ -134,9 +141,9 @@ function actualizar(cedula, nombres, apellidos, telefono, direccion, email){
 function eliminarPersona(cedula) {
     let form = new FormData();
     form.append('cedula', cedula);
-    
-    
-    
+
+
+
     let configuracion = {
         method: 'POST',
         headers: { 'Accept': 'application/json' },
@@ -146,7 +153,7 @@ function eliminarPersona(cedula) {
     fetch('http://codetesthub.com/API/Eliminar.php', configuracion)
         .then(resp => resp.json())
         .then(data => {
-            console.log('la api muestra',data);
+            console.log('la api muestra', data);
 
         });
 
