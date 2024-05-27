@@ -12,10 +12,7 @@ public class Principal {
     ConsumoAPI consumo = new ConsumoAPI();
     //endpoint obtener
 
-    public void mostrar() {
-        
-
-    }
+    
 
     public static void main(String[] args) {
         Interfaz hola = new Interfaz();

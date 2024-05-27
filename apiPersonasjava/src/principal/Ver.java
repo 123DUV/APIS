@@ -4,22 +4,57 @@
  */
 package principal;
 import principal.Principal;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author SENA
  */
 public class Ver extends javax.swing.JPanel {
 
-    /**
-     * Creates new form Ver
-     */
+    DefaultTableModel modelo;
     public Ver() {
         initComponents();
         initAlternComponents();
+        
+        modelo= (DefaultTableModel)tabla.getModel();
+        llenar();
     }
     public void initAlternComponents(){
         
     }
+public void llenar(){
+    ConsumoAPI consumo = new ConsumoAPI();
+        String respuesta = consumo.consumoGET("http://codetesthub.com/API/Obtener.php");
+        
+        JsonArray lista = JsonParser.parseString(respuesta).getAsJsonArray();
+        if(lista!=null){
+            modelo.setRowCount(0);
+            int contador = 1;
+            for (int i = 0; i < lista.size(); i++) {
+                JsonObject temp = lista.get(i).getAsJsonObject();
+                
+                Object[] fila = {
+                    contador,
+                    temp.get("cedula").getAsString(),
+                    temp.get("nombres").getAsString(),
+                    temp.get("apellidos").getAsString(),
+                    temp.get("telefono").getAsString(),
+                    temp.get("direccion").getAsString(),
+                    temp.get("email").getAsString(),
+
+                    
+                };
+                modelo.addRow(fila);
+                contador++;
+            }
+        }else{
+            JOptionPane.showMessageDialog(null, "error");
+        }
+}
 
     
     @SuppressWarnings("unchecked")
