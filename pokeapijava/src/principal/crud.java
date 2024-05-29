@@ -11,13 +11,15 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.*;
+import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 
 public class crud extends javax.swing.JFrame {
 
     JButton[] botones;
-    JsonArray lista; 
+    JsonArray lista;
+
     public crud() {
         initComponents();
         initAlternComponents();
@@ -30,19 +32,28 @@ public class crud extends javax.swing.JFrame {
     }
 
     public void mostrarInfo(String url) {
-          System.out.println(url);
-          ConsumoAPI consumo = new ConsumoAPI();
-          String respuesta = consumo.consumoGET(url);
-          JsonObject list = JsonParser.parseString(respuesta).getAsJsonObject();
-          JsonObject lista = list.getAsJsonObject("sprites");
-          System.out.println(lista);
-          for (int i = 0; i < lista.size(); i++) {
-               
-            
-        }
-          
-          
+        try{
+        System.out.println(url);
+        ConsumoAPI consumo = new ConsumoAPI();
+        String respuesta = consumo.consumoGET(url);
+        JsonObject list = JsonParser.parseString(respuesta).getAsJsonObject();
+        JsonObject sprites = list.getAsJsonObject("sprites");
         
+        System.out.println(lista);
+
+        String imagenUrl = sprites.get("front_shiny").getAsString();
+        System.out.println(imagenUrl);
+        ImageIcon pokeImagen = new ImageIcon(new URL(imagenUrl));
+        Image image = pokeImagen.getImage();
+        Image   escalada = image.getScaledInstance(500, 500, Image.SCALE_SMOOTH);
+        icono.setIcon(new ImageIcon(escalada    ));
+        icono.setBackground(Color.WHITE);
+        icono.setHorizontalTextPosition(SwingConstants.CENTER);
+        icono.setVerticalTextPosition(SwingConstants.BOTTOM);
+        
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void cargarBotones() {
@@ -58,24 +69,22 @@ public class crud extends javax.swing.JFrame {
             JsonObject pokemon = lista.get(i).getAsJsonObject();
             String nombre = pokemon.get("name").getAsString();
             String url = pokemon.get("url").getAsString();
-            
+
             //System.out.println(nombre);
-            
             botones[i] = new JButton(nombre);
             botones[i].setPreferredSize(new Dimension(146, botones[i].getPreferredSize().height));
             botones[i].setMaximumSize(new Dimension(146, botones[i].getPreferredSize().height));
-            botones[i].addActionListener(new ActionListener (){
-               public void actionPerformed(ActionEvent e){
-                   mostrarInfo(url);
-               }     
+            botones[i].addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    mostrarInfo(url);
+                }
             });
-                
-            
+
             panelBotones.add(botones[i]);
             System.out.println("Boton agregado: " + nombre);
 
         }
-
+        pack();
         panelBotones.revalidate();
         panelBotones.repaint();
         System.out.println(lista);
@@ -126,22 +135,23 @@ public class crud extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(157, Short.MAX_VALUE)
-                .addComponent(icono, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(45, 45, 45))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(100, 100, 100)
+                        .addComponent(icono, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(102, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
+                .addGap(18, 18, 18)
                 .addComponent(icono, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(267, Short.MAX_VALUE))
+                .addContainerGap(279, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
