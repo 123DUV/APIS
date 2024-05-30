@@ -84,6 +84,7 @@
                   </Group>
                   <EmptySpace pref="102" max="32767" attributes="0"/>
               </Group>
+              <Component id="panelPasar" alignment="0" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
@@ -93,7 +94,9 @@
                   <Component id="jButton1" min="-2" pref="49" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="icono" min="-2" pref="246" max="-2" attributes="0"/>
-                  <EmptySpace pref="279" max="32767" attributes="0"/>
+                  <EmptySpace pref="223" max="32767" attributes="0"/>
+                  <Component id="panelPasar" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -123,6 +126,26 @@
             </Property>
           </Properties>
         </Component>
+        <Container class="javax.swing.JPanel" name="panelPasar">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="66" green="66" red="66" type="rgb"/>
+            </Property>
+          </Properties>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <EmptySpace min="0" pref="50" max="32767" attributes="0"/>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+        </Container>
       </SubComponents>
     </Container>
   </SubComponents>

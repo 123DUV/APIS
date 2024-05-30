@@ -19,6 +19,9 @@ public class crud extends javax.swing.JFrame {
 
     JButton[] botones;
     JsonArray lista;
+    int enPagina = 5;
+    int paginaActual = 1;
+    int totalPaginas    ;
 
     public crud() {
         initComponents();
@@ -28,30 +31,32 @@ public class crud extends javax.swing.JFrame {
     public void initAlternComponents() {
         setVisible(true);
         setLocationRelativeTo(null);
+        cargarBotones();
+        pasar();
 
     }
 
     public void mostrarInfo(String url) {
-        try{
-        System.out.println(url);
-        ConsumoAPI consumo = new ConsumoAPI();
-        String respuesta = consumo.consumoGET(url);
-        JsonObject list = JsonParser.parseString(respuesta).getAsJsonObject();
-        JsonObject sprites = list.getAsJsonObject("sprites");
-        
-        System.out.println(lista);
+        try {
+            System.out.println(url);
+            ConsumoAPI consumo = new ConsumoAPI();
+            String respuesta = consumo.consumoGET(url);
+            JsonObject list = JsonParser.parseString(respuesta).getAsJsonObject();
+            JsonObject sprites = list.getAsJsonObject("sprites");
 
-        String imagenUrl = sprites.get("front_shiny").getAsString();
-        System.out.println(imagenUrl);
-        ImageIcon pokeImagen = new ImageIcon(new URL(imagenUrl));
-        Image image = pokeImagen.getImage();
-        Image   escalada = image.getScaledInstance(500, 500, Image.SCALE_SMOOTH);
-        icono.setIcon(new ImageIcon(escalada    ));
-        icono.setBackground(Color.WHITE);
-        icono.setHorizontalTextPosition(SwingConstants.CENTER);
-        icono.setVerticalTextPosition(SwingConstants.BOTTOM);
-        
-        }catch(Exception e){
+            System.out.println(lista);
+
+            String imagenUrl = sprites.get("front_shiny").getAsString();
+            System.out.println(imagenUrl);
+            ImageIcon pokeImagen = new ImageIcon(new URL(imagenUrl));
+            Image image = pokeImagen.getImage();
+            Image escalada = image.getScaledInstance(500, 500, Image.SCALE_SMOOTH);
+            icono.setIcon(new ImageIcon(escalada));
+            icono.setBackground(Color.WHITE);
+            icono.setHorizontalTextPosition(SwingConstants.CENTER);
+            icono.setVerticalTextPosition(SwingConstants.BOTTOM);
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -62,33 +67,81 @@ public class crud extends javax.swing.JFrame {
         String respuesta = consumo.consumoGET("https://pokeapi.co/api/v2/pokemon");
         JsonObject list = JsonParser.parseString(respuesta).getAsJsonObject();
         lista = list.getAsJsonArray("results");
+        System.out.println(list);
 
-        botones = new JButton[lista.size()];
+       
+        int inicio = (paginaActual - 1) * enPagina;
+        int ultimo = Math.min(inicio + enPagina, lista.size(    ));
+        botones = new JButton[ultimo - inicio];
         panelBotones.setLayout(new BoxLayout(panelBotones, BoxLayout.Y_AXIS));
-        for (int i = 0; i < lista.size(); i++) {
+
+        for (int i = inicio; i < ultimo; i++) {
             JsonObject pokemon = lista.get(i).getAsJsonObject();
             String nombre = pokemon.get("name").getAsString();
             String url = pokemon.get("url").getAsString();
 
             //System.out.println(nombre);
-            botones[i] = new JButton(nombre);
-            botones[i].setPreferredSize(new Dimension(146, botones[i].getPreferredSize().height));
-            botones[i].setMaximumSize(new Dimension(146, botones[i].getPreferredSize().height));
-            botones[i].addActionListener(new ActionListener() {
+            botones[i - inicio] = new JButton(nombre);
+            botones[i - inicio].setPreferredSize(new Dimension(146, botones[i - inicio].getPreferredSize().height));
+            botones[i - inicio].setMaximumSize(new Dimension(146, botones[i - inicio].getPreferredSize().height));
+            botones[i - inicio].addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     mostrarInfo(url);
                 }
             });
 
-            panelBotones.add(botones[i]);
+            panelBotones.add(botones[i - inicio]);
             System.out.println("Boton agregado: " + nombre);
 
         }
-        pack();
+
         panelBotones.revalidate();
         panelBotones.repaint();
         System.out.println(lista);
 
+    }
+
+    public void pasar() {
+        panelPasar.removeAll();
+        
+        panelPasar.setLayout(new BoxLayout(panelPasar, BoxLayout.X_AXIS));
+        JButton anterior = new JButton("<");
+        anterior.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (paginaActual > 1) {
+                    paginaActual--;
+                    cargarBotones();
+                    pasar();
+                }
+            }
+        });
+        totalPaginas = (int)Math.ceil((double)lista.size() / enPagina);
+        panelPasar.add(anterior);
+        for (int i = 1; i < totalPaginas; i++) {
+            JButton actual = new JButton(String.valueOf(i));
+            
+            actual.addActionListener(new ActionListener() {  
+                public void actionPerformed(ActionEvent e) {
+                    paginaActual = Integer.parseInt(e.getActionCommand());
+                    cargarBotones();
+                    pasar();
+                }
+            });
+            panelPasar.add(actual);
+        }
+        JButton siguiente = new JButton(">");
+        anterior.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (paginaActual < totalPaginas) {
+                    paginaActual++;
+                    cargarBotones();
+                    pasar();
+                }
+            }
+        });
+        panelPasar.add(siguiente);
+        panelPasar.revalidate();
+        panelPasar.repaint();
     }
 
     @SuppressWarnings("unchecked")
@@ -99,6 +152,7 @@ public class crud extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         icono = new javax.swing.JLabel();
+        panelPasar = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -130,6 +184,19 @@ public class crud extends javax.swing.JFrame {
 
         icono.setFont(new java.awt.Font("Tempus Sans ITC", 2, 18)); // NOI18N
 
+        panelPasar.setBackground(new java.awt.Color(102, 102, 102));
+
+        javax.swing.GroupLayout panelPasarLayout = new javax.swing.GroupLayout(panelPasar);
+        panelPasar.setLayout(panelPasarLayout);
+        panelPasarLayout.setHorizontalGroup(
+            panelPasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        panelPasarLayout.setVerticalGroup(
+            panelPasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 50, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -143,6 +210,7 @@ public class crud extends javax.swing.JFrame {
                         .addGap(100, 100, 100)
                         .addComponent(icono, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(102, Short.MAX_VALUE))
+            .addComponent(panelPasar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -151,7 +219,9 @@ public class crud extends javax.swing.JFrame {
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(icono, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(279, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 223, Short.MAX_VALUE)
+                .addComponent(panelPasar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -173,7 +243,7 @@ public class crud extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        cargarBotones();
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
 
@@ -182,5 +252,6 @@ public class crud extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel panelBotones;
+    private javax.swing.JPanel panelPasar;
     // End of variables declaration//GEN-END:variables
 }
