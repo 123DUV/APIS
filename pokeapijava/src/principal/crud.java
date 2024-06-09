@@ -1,6 +1,7 @@
 package principal;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.awt.Dimension;
@@ -11,18 +12,26 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.*;
+import java.net.MalformedURLException;
 import java.net.URL;
-import javax.swing.ImageIcon;       
+import javax.swing.ImageIcon;
+import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
+import java.util.Map.Entry;
+import java.net.URL;
 
 public class crud extends javax.swing.JFrame {
 
     JButton[] botones;
+    JButton[] botonesTwo;
+    String urlGlobal;
     JsonArray lista;
+    JsonObject spritess;
     String siguiente;
     String anterior;
     DefaultTableModel modelo;
+    int contadorSprites = 0;
 
     public crud() {
         initComponents();
@@ -35,11 +44,55 @@ public class crud extends javax.swing.JFrame {
         setVisible(true);
         setLocationRelativeTo(null);
         cargarBotones();
-       pack();
+       
+        pack();
 
     }
 
+    public void mostrarPokeOtro() {
+    try {
+        System.out.println(urlGlobal);
+        ConsumoAPI consumo = new ConsumoAPI();
+        String respuesta = consumo.consumoGET(urlGlobal);
+        JsonObject list = JsonParser.parseString(respuesta).getAsJsonObject();
+        JsonObject sprites = list.getAsJsonObject("sprites");
+        
+        
+        
+        for (Entry<String, JsonElement> entry : sprites.entrySet()) {
+        String key = entry.getKey();
+        JsonElement value = entry.getValue();
+        System.out.println("Clave: " + key+ " valor "+value);
+        if (contadorSprites < sprites.size()) { 
+        if (value != null && value.isJsonPrimitive()) {
+            String imagenUrl = value.getAsString();
+            URL url2 = new URL(imagenUrl);
+            ImageIcon pokeImagen = new ImageIcon(url2);
+                    if (pokeImagen != null && pokeImagen.getImageLoadStatus() == MediaTracker.COMPLETE) {
+                    Image image = pokeImagen.getImage();
+                    Image escalada = image.getScaledInstance(500, 500, Image.SCALE_SMOOTH);
+                    icono.setIcon(new ImageIcon(escalada)); 
+                    contadorSprites++;  
+                    break;
+                    
+                } else {
+                    System.out.println("Error: La imagen no se cargó correctamente.");
+                }  
+        }   
+        }else{
+            System.out.println("No hay mas sprites");
+        }
+    } 
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
+
+  
+
     public void mostrarPoke(String url) {
+        
         try {
             System.out.println(url);
             ConsumoAPI consumo = new ConsumoAPI();
@@ -48,8 +101,9 @@ public class crud extends javax.swing.JFrame {
             JsonObject sprites = list.getAsJsonObject("sprites");
 
             System.out.println(lista);
-
+            
             String imagenUrl = sprites.get("front_shiny").getAsString();
+            
             System.out.println(imagenUrl);
             ImageIcon pokeImagen = new ImageIcon(new URL(imagenUrl));
             Image image = pokeImagen.getImage();
@@ -62,8 +116,8 @@ public class crud extends javax.swing.JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
-    
 
     public void cargarBotones() {
         panelBotones.removeAll();
@@ -71,7 +125,7 @@ public class crud extends javax.swing.JFrame {
         String respuesta = consumo.consumoGET("https://pokeapi.co/api/v2/pokemon");
         JsonObject list = JsonParser.parseString(respuesta).getAsJsonObject();
         siguiente = list.get("next").getAsString();
-        
+
         lista = list.getAsJsonArray("results");
         System.out.println(list);
 
@@ -91,9 +145,12 @@ public class crud extends javax.swing.JFrame {
                 public void actionPerformed(ActionEvent e) {
                     mostrarPoke(url);
                     mostrarInfo(url);
+                    urlGlobal=url;
                 }
+                
             });
-
+            
+            
             panelBotones.add(botones[i]);
             System.out.println("Boton agregado: " + nombre);
 
@@ -104,8 +161,6 @@ public class crud extends javax.swing.JFrame {
         System.out.println(lista);
 
     }
-
-    
 
     public void mostrarInfo(String url) {
         System.out.println(url);
@@ -123,12 +178,10 @@ public class crud extends javax.swing.JFrame {
             Object[] fila = {
                 contador,
                 habilidades2.get("name").getAsString(),
-                habilidades2.get("url").getAsString(),
-            
-        };
-        modelo.addRow(fila);
-        contador++;
-    }
+                habilidades2.get("url").getAsString(),};
+            modelo.addRow(fila);
+            contador++;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -137,12 +190,13 @@ public class crud extends javax.swing.JFrame {
 
         panelBotones = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-        panelPasar = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabla = new javax.swing.JTable();
         icono = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        nextOther = new javax.swing.JButton();
+        previousOther = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -161,19 +215,6 @@ public class crud extends javax.swing.JFrame {
         );
 
         jPanel2.setBackground(new java.awt.Color(51, 51, 51));
-
-        panelPasar.setBackground(new java.awt.Color(102, 102, 102));
-
-        javax.swing.GroupLayout panelPasarLayout = new javax.swing.GroupLayout(panelPasar);
-        panelPasar.setLayout(panelPasarLayout);
-        panelPasarLayout.setHorizontalGroup(
-            panelPasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        panelPasarLayout.setVerticalGroup(
-            panelPasarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 65, Short.MAX_VALUE)
-        );
 
         tabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -202,25 +243,38 @@ public class crud extends javax.swing.JFrame {
             }
         });
 
+        nextOther.setText(">");
+        nextOther.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nextOtherActionPerformed(evt);
+            }
+        });
+
+        previousOther.setText("<");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelPasar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addComponent(icono, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(425, 425, 425))
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(28, 28, 28)
-                        .addComponent(icono, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(previousOther, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(10, 10, 10)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 6, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(nextOther, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(189, 189, 189)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -228,18 +282,23 @@ public class crud extends javax.swing.JFrame {
                 .addGap(14, 14, 14)
                 .addComponent(icono, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 84, Short.MAX_VALUE)
+                        .addComponent(nextOther, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(149, 149, 149))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(74, 74, 74)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(62, 62, 62)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(75, 75, 75)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 137, Short.MAX_VALUE)
-                .addComponent(panelPasar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(81, 81, 81)
+                                .addComponent(previousOther, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(73, 73, 73)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(25, 25, 25))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -260,20 +319,22 @@ public class crud extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-       panelBotones.removeAll();
-       ConsumoAPI consumo = new ConsumoAPI();
+        panelBotones.removeAll();
+        ConsumoAPI consumo = new ConsumoAPI();
         String respuesta = consumo.consumoGET(siguiente);
         JsonObject list = JsonParser.parseString(respuesta).getAsJsonObject();
         siguiente = list.get("next").getAsString();
         anterior = list.get("previous").getAsString();
         System.out.println(siguiente);
-        
+
         lista = list.getAsJsonArray("results");
         System.out.println(list);
 
         panelBotones.setLayout(new BoxLayout(panelBotones, BoxLayout.Y_AXIS));
         botones = new JButton[lista.size()];
+
         for (int i = 0; i < lista.size(); i++) {
             JsonObject pokemon = lista.get(i).getAsJsonObject();
             String nombre = pokemon.get("name").getAsString();
@@ -288,6 +349,7 @@ public class crud extends javax.swing.JFrame {
                 public void actionPerformed(ActionEvent e) {
                     mostrarPoke(url);
                     mostrarInfo(url);
+                    urlGlobal=url;
                 }
             });
 
@@ -304,17 +366,17 @@ public class crud extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         panelBotones.removeAll();
-       ConsumoAPI consumo = new ConsumoAPI();
+        ConsumoAPI consumo = new ConsumoAPI();
         String respuesta = consumo.consumoGET(anterior);
         JsonObject list = JsonParser.parseString(respuesta).getAsJsonObject();
         siguiente = list.get("next").getAsString();
         if (list.has("previous") && !list.get("previous").isJsonNull()) {
-                anterior = list.get("previous").getAsString();
-            } else {
-                anterior = null;
-            }
+            anterior = list.get("previous").getAsString();
+        } else {
+            anterior = null;
+        }
         System.out.println(siguiente);
-        
+
         lista = list.getAsJsonArray("results");
         System.out.println(list);
 
@@ -334,6 +396,7 @@ public class crud extends javax.swing.JFrame {
                 public void actionPerformed(ActionEvent e) {
                     mostrarPoke(url);
                     mostrarInfo(url);
+                    urlGlobal=url;
                 }
             });
 
@@ -347,6 +410,10 @@ public class crud extends javax.swing.JFrame {
         System.out.println(lista);
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void nextOtherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextOtherActionPerformed
+        mostrarPokeOtro();
+    }//GEN-LAST:event_nextOtherActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel icono;
@@ -354,8 +421,9 @@ public class crud extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton nextOther;
     private javax.swing.JPanel panelBotones;
-    private javax.swing.JPanel panelPasar;
+    private javax.swing.JButton previousOther;
     private javax.swing.JTable tabla;
     // End of variables declaration//GEN-END:variables
 }
