@@ -24,7 +24,7 @@ import java.net.URL;
 public class crud extends javax.swing.JFrame {
 
     JButton[] botones;
-    JButton[] botonesTwo;
+    
     String urlGlobal;
     JsonArray lista;
     JsonObject spritess;
@@ -32,6 +32,7 @@ public class crud extends javax.swing.JFrame {
     String anterior;
     DefaultTableModel modelo;
     int contadorSprites = 0;
+    
 
     public crud() {
         initComponents();
@@ -44,55 +45,50 @@ public class crud extends javax.swing.JFrame {
         setVisible(true);
         setLocationRelativeTo(null);
         cargarBotones();
-       
+
         pack();
 
     }
 
     public void mostrarPokeOtro() {
-    try {
-        System.out.println(urlGlobal);
-        ConsumoAPI consumo = new ConsumoAPI();
-        String respuesta = consumo.consumoGET(urlGlobal);
-        JsonObject list = JsonParser.parseString(respuesta).getAsJsonObject();
-        JsonObject sprites = list.getAsJsonObject("sprites");
-        
-        
-        
-        for (Entry<String, JsonElement> entry : sprites.entrySet()) {
-        String key = entry.getKey();
-        JsonElement value = entry.getValue();
-        System.out.println("Clave: " + key+ " valor "+value);
-        if (contadorSprites < sprites.size()) { 
-        if (value != null && value.isJsonPrimitive()) {
-            String imagenUrl = value.getAsString();
-            URL url2 = new URL(imagenUrl);
-            ImageIcon pokeImagen = new ImageIcon(url2);
-                    if (pokeImagen != null && pokeImagen.getImageLoadStatus() == MediaTracker.COMPLETE) {
-                    Image image = pokeImagen.getImage();
-                    Image escalada = image.getScaledInstance(500, 500, Image.SCALE_SMOOTH);
-                    icono.setIcon(new ImageIcon(escalada)); 
-                    contadorSprites++;  
-                    break;
-                    
+        try {
+            System.out.println(urlGlobal);
+            ConsumoAPI consumo = new ConsumoAPI();
+            String respuesta = consumo.consumoGET(urlGlobal);
+            JsonObject list = JsonParser.parseString(respuesta).getAsJsonObject();
+            JsonObject sprites = list.getAsJsonObject("sprites");
+
+            for (Entry<String, JsonElement> entry : sprites.entrySet()) {
+                String key = entry.getKey();
+                JsonElement value = entry.getValue();
+                System.out.println("Clave: " + key + " valor " + value);
+                if (contadorSprites < sprites.size()) {
+                    if (value != null && value.isJsonPrimitive()) {
+                        String imagenUrl = value.getAsString();
+                        URL url2 = new URL(imagenUrl);
+                        ImageIcon pokeImagen = new ImageIcon(url2);
+                        if (pokeImagen != null && pokeImagen.getImageLoadStatus() == MediaTracker.COMPLETE) {
+                            Image image = pokeImagen.getImage();
+                            Image escalada = image.getScaledInstance(500, 500, Image.SCALE_SMOOTH);
+                            icono.setIcon(new ImageIcon(escalada));
+                            contadorSprites++;
+                            break;
+
+                        } else {
+                            System.out.println("Error: La imagen no se cargó correctamente.");
+                        }
+                    }
                 } else {
-                    System.out.println("Error: La imagen no se cargó correctamente.");
-                }  
-        }   
-        }else{
-            System.out.println("No hay mas sprites");
+                    System.out.println("No hay mas sprites");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    } 
-    } catch (Exception e) {
-        e.printStackTrace();
     }
-}
-
-
-  
 
     public void mostrarPoke(String url) {
-        
+
         try {
             System.out.println(url);
             ConsumoAPI consumo = new ConsumoAPI();
@@ -101,9 +97,9 @@ public class crud extends javax.swing.JFrame {
             JsonObject sprites = list.getAsJsonObject("sprites");
 
             System.out.println(lista);
-            
+
             String imagenUrl = sprites.get("front_shiny").getAsString();
-            
+
             System.out.println(imagenUrl);
             ImageIcon pokeImagen = new ImageIcon(new URL(imagenUrl));
             Image image = pokeImagen.getImage();
@@ -145,12 +141,11 @@ public class crud extends javax.swing.JFrame {
                 public void actionPerformed(ActionEvent e) {
                     mostrarPoke(url);
                     mostrarInfo(url);
-                    urlGlobal=url;
+                    urlGlobal = url;
                 }
-                
+
             });
-            
-            
+
             panelBotones.add(botones[i]);
             System.out.println("Boton agregado: " + nombre);
 
@@ -182,6 +177,95 @@ public class crud extends javax.swing.JFrame {
             modelo.addRow(fila);
             contador++;
         }
+    }
+
+    public void siguiente() {
+        panelBotones.removeAll();
+        ConsumoAPI consumo = new ConsumoAPI();
+        String respuesta = consumo.consumoGET(siguiente);
+        JsonObject list = JsonParser.parseString(respuesta).getAsJsonObject();
+        siguiente = list.get("next").getAsString();
+        anterior = list.get("previous").getAsString();
+        System.out.println(siguiente);
+
+        lista = list.getAsJsonArray("results");
+        System.out.println(list);
+
+        panelBotones.setLayout(new BoxLayout(panelBotones, BoxLayout.Y_AXIS));
+        botones = new JButton[lista.size()];
+
+        for (int i = 0; i < lista.size(); i++) {
+            JsonObject pokemon = lista.get(i).getAsJsonObject();
+            String nombre = pokemon.get("name").getAsString();
+            String url = pokemon.get("url").getAsString();
+
+            System.out.println(nombre);
+
+            botones[i] = new JButton(nombre);
+            botones[i].setPreferredSize(new Dimension(146, botones[i].getPreferredSize().height));
+            botones[i].setMaximumSize(new Dimension(146, botones[i].getPreferredSize().height));
+            botones[i].addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    mostrarPoke(url);
+                    mostrarInfo(url);
+                    urlGlobal = url;
+                }
+            });
+
+            panelBotones.add(botones[i]);
+            System.out.println("Boton agregado: " + nombre);
+
+        }
+
+        panelBotones.revalidate();
+        panelBotones.repaint();
+        System.out.println(lista);
+    }
+
+    public void anterior() {
+        panelBotones.removeAll();
+        ConsumoAPI consumo = new ConsumoAPI();
+        String respuesta = consumo.consumoGET(anterior);
+        JsonObject list = JsonParser.parseString(respuesta).getAsJsonObject();
+        siguiente = list.get("next").getAsString();
+        if (list.has("previous") && !list.get("previous").isJsonNull()) {
+            anterior = list.get("previous").getAsString();
+        } else {
+            anterior = null;
+        }
+        System.out.println(siguiente);
+
+        lista = list.getAsJsonArray("results");
+        System.out.println(list);
+
+        panelBotones.setLayout(new BoxLayout(panelBotones, BoxLayout.Y_AXIS));
+        botones = new JButton[lista.size()];
+        for (int i = 0; i < lista.size(); i++) {
+            JsonObject pokemon = lista.get(i).getAsJsonObject();
+            String nombre = pokemon.get("name").getAsString();
+            String url = pokemon.get("url").getAsString();
+
+            System.out.println(nombre);
+
+            botones[i] = new JButton(nombre);
+            botones[i].setPreferredSize(new Dimension(146, botones[i].getPreferredSize().height));
+            botones[i].setMaximumSize(new Dimension(146, botones[i].getPreferredSize().height));
+            botones[i].addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    mostrarPoke(url);
+                    mostrarInfo(url);
+                    urlGlobal = url;
+                }
+            });
+
+            panelBotones.add(botones[i]);
+            System.out.println("Boton agregado: " + nombre);
+
+        }
+
+        panelBotones.revalidate();
+        panelBotones.repaint();
+        System.out.println(lista);
     }
 
     @SuppressWarnings("unchecked")
@@ -258,7 +342,7 @@ public class crud extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(28, 28, 28)
-                .addComponent(icono, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(icono, javax.swing.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
                 .addGap(425, 425, 425))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -266,14 +350,14 @@ public class crud extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(previousOther, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(nextOther, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(189, 189, 189)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 366, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(nextOther, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(182, 182, 182)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(54, 54, 54)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -282,23 +366,23 @@ public class crud extends javax.swing.JFrame {
                 .addGap(14, 14, 14)
                 .addComponent(icono, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 84, Short.MAX_VALUE)
-                        .addComponent(nextOther, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(149, 149, 149))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(81, 81, 81)
-                                .addComponent(previousOther, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGap(73, 73, 73)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(25, 25, 25))
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(nextOther, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(51, 51, 51)))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(81, 81, 81)
+                        .addComponent(previousOther, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(125, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -321,93 +405,11 @@ public class crud extends javax.swing.JFrame {
 
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        panelBotones.removeAll();
-        ConsumoAPI consumo = new ConsumoAPI();
-        String respuesta = consumo.consumoGET(siguiente);
-        JsonObject list = JsonParser.parseString(respuesta).getAsJsonObject();
-        siguiente = list.get("next").getAsString();
-        anterior = list.get("previous").getAsString();
-        System.out.println(siguiente);
-
-        lista = list.getAsJsonArray("results");
-        System.out.println(list);
-
-        panelBotones.setLayout(new BoxLayout(panelBotones, BoxLayout.Y_AXIS));
-        botones = new JButton[lista.size()];
-
-        for (int i = 0; i < lista.size(); i++) {
-            JsonObject pokemon = lista.get(i).getAsJsonObject();
-            String nombre = pokemon.get("name").getAsString();
-            String url = pokemon.get("url").getAsString();
-
-            System.out.println(nombre);
-
-            botones[i] = new JButton(nombre);
-            botones[i].setPreferredSize(new Dimension(146, botones[i].getPreferredSize().height));
-            botones[i].setMaximumSize(new Dimension(146, botones[i].getPreferredSize().height));
-            botones[i].addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    mostrarPoke(url);
-                    mostrarInfo(url);
-                    urlGlobal=url;
-                }
-            });
-
-            panelBotones.add(botones[i]);
-            System.out.println("Boton agregado: " + nombre);
-
-        }
-
-        panelBotones.revalidate();
-        panelBotones.repaint();
-        System.out.println(lista);
-
+        siguiente();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        panelBotones.removeAll();
-        ConsumoAPI consumo = new ConsumoAPI();
-        String respuesta = consumo.consumoGET(anterior);
-        JsonObject list = JsonParser.parseString(respuesta).getAsJsonObject();
-        siguiente = list.get("next").getAsString();
-        if (list.has("previous") && !list.get("previous").isJsonNull()) {
-            anterior = list.get("previous").getAsString();
-        } else {
-            anterior = null;
-        }
-        System.out.println(siguiente);
-
-        lista = list.getAsJsonArray("results");
-        System.out.println(list);
-
-        panelBotones.setLayout(new BoxLayout(panelBotones, BoxLayout.Y_AXIS));
-        botones = new JButton[lista.size()];
-        for (int i = 0; i < lista.size(); i++) {
-            JsonObject pokemon = lista.get(i).getAsJsonObject();
-            String nombre = pokemon.get("name").getAsString();
-            String url = pokemon.get("url").getAsString();
-
-            System.out.println(nombre);
-
-            botones[i] = new JButton(nombre);
-            botones[i].setPreferredSize(new Dimension(146, botones[i].getPreferredSize().height));
-            botones[i].setMaximumSize(new Dimension(146, botones[i].getPreferredSize().height));
-            botones[i].addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    mostrarPoke(url);
-                    mostrarInfo(url);
-                    urlGlobal=url;
-                }
-            });
-
-            panelBotones.add(botones[i]);
-            System.out.println("Boton agregado: " + nombre);
-
-        }
-
-        panelBotones.revalidate();
-        panelBotones.repaint();
-        System.out.println(lista);
+        anterior();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void nextOtherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextOtherActionPerformed
