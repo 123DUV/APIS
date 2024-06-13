@@ -15,6 +15,8 @@ public class Interfaz extends javax.swing.JFrame {
 
    
     ArrayList<String> lista = new ArrayList<>();
+    ArrayList<String> listaImagenes = new ArrayList<>();
+    String otra;
     String urlGlobal="https://digi-api.com/api/v1/digimon";
     String next;
     
@@ -26,11 +28,12 @@ public class Interfaz extends javax.swing.JFrame {
     public void initAlternComponents() {
         setVisible(true);
         setLocationRelativeTo(null);
-        pack();
-        mostrarInfo(urlGlobal);
+        pack(); 
         
+        mostrarInfo(urlGlobal);
     }
-
+    
+    
     public void mostrarInfo(String url) {
         System.out.println(url);
         ConsumoAPI consumo = new ConsumoAPI();
@@ -45,20 +48,22 @@ public class Interfaz extends javax.swing.JFrame {
             
 
             String nombre = temp.get("name").getAsString();
+            String imagen = temp.get("image").getAsString();
             lista.add(nombre);
+            listaImagenes.add(imagen);
             contador++;
             System.out.println(nombre);
+            System.out.println(imagen);
             
         }
-       actualizarBotones();
-    }
-    public void actualizarBotones(){
-        
-        uno.setText(lista.get(0));
+       uno.setText(lista.get(0));
         dos.setText(lista.get(1));
         tres.setText(lista.get(2));
         cuatro.setText(lista.get(3));
         cinco.setText(lista.get(4));
+    }
+    public void traerImagen(){
+        
     }
     public void obtenerSiguientePage(){
         ConsumoAPI consumo = new ConsumoAPI();
@@ -66,31 +71,19 @@ public class Interfaz extends javax.swing.JFrame {
         JsonObject list = JsonParser.parseString(respuesta).getAsJsonObject();
         JsonObject contenido2 = list.getAsJsonObject("pageable");
         next = contenido2.get("nextPage").getAsString();
+        urlGlobal=next;
     }
     public void siguiente(){
         obtenerSiguientePage();
         
-        System.out.println(next);
-        urlGlobal=next;
+        otra=next;
+        System.out.println(otra);
         mostrarInfo(urlGlobal);
-        ConsumoAPI consumo = new ConsumoAPI();
-        String respuesta = consumo.consumoGET(urlGlobal);
-        JsonObject list = JsonParser.parseString(respuesta).getAsJsonObject();
-        JsonArray contenido = list.getAsJsonArray("content");
-        int contador = 0;
-        for (int i = 0; i < contenido.size(); i++) {
-            JsonObject temp = contenido.get(i).getAsJsonObject();
-            
-
-            String nombre = temp.get("name").getAsString();
-            lista.add(nombre);
-            contador++;
-            System.out.println(nombre);
-            
+         
         }
-       actualizarBotones();
+       
         
-    }
+    
     
     
 
