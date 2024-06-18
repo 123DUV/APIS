@@ -16,7 +16,9 @@ import javax.swing.ImageIcon;
 public class ItemDigimon extends javax.swing.JPanel {
     
     JsonObject digimon;//aqui almacenamos la info q viene del array
-    
+    String urlImagn;
+    String namee;
+   
     public ItemDigimon(JsonObject digimon) {
         this.digimon = digimon;
         initComponents();
@@ -29,7 +31,10 @@ public class ItemDigimon extends javax.swing.JPanel {
             Image imagen = getToolkit().createImage(url);
             imagen = imagen.getScaledInstance(197, 181, Image.SCALE_SMOOTH);
             etqImagen.setIcon(new ImageIcon(imagen));
-            etqNombre.setText(this.digimon.get("name").getAsString());
+            String nombre = this.digimon.get("name").getAsString();
+             
+            etqNombre.setText(nombre);
+            
         } catch (MalformedURLException ex) {
             System.out.println("Error en URL"+ex.getMessage());
         }
@@ -105,8 +110,11 @@ public class ItemDigimon extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void panelPrincipalMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelPrincipalMouseClicked
+        infoPoke ventana = new infoPoke(digimon);
+        
         System.out.println("click en: "+this.digimon.get("name").getAsString());
-        System.out.println("Endpoint: "+this.digimon.get("href").getAsString());
+        System.out.println("Endpoint: "+this.digimon.get("image").getAsString());
+        
     }//GEN-LAST:event_panelPrincipalMouseClicked
 
 

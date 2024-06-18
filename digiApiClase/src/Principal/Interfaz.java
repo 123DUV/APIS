@@ -13,6 +13,7 @@ import javax.swing.JButton;
 public class Interfaz extends javax.swing.JFrame {
 
     int pagina;//es pagina actual sirve para el paginador
+    JButton btnMid;
 
     public Interfaz() {
         this.pagina = 0;
@@ -97,23 +98,36 @@ public class Interfaz extends javax.swing.JFrame {
 
         });
         //crear el boton de paginas
-        for (int i = 1; i <= 7; i++) {
-            JButton btnMid = new JButton("" + i);
-            panelPaginador.add(btnMid);
-            
-            if((i-1)==pagina){
-                btnMid.setBackground(Color.BLACK);
-                btnMid.setForeground(Color.WHITE);
-            }
-            final int posicion = i;
-            btnMid.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    pagina=posicion-1;
-                    cargarDigimon();
-                }
+        int inicio = pagina - 2;
+        int fin = pagina + 4;
+        if (inicio < 0) {
+            inicio = 1;
+        }
+        for (int i = inicio; i <= fin; i++) {
 
-            });
+            if (fin > 292) {
+                fin = 292;
+            } else if (pagina < 292) {
+                btnMid = new JButton("" + i);
+                panelPaginador.add(btnMid);
+
+                if ((i - 1) == pagina) {
+                    btnMid.setBackground(Color.BLACK);
+                    btnMid.setForeground(Color.WHITE);
+                }
+                final int posicion = i;
+                if (posicion == 0) {
+                    panelPaginador.remove(btnMid);
+                }
+                btnMid.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        pagina = posicion - 1;
+                        cargarDigimon();
+                    }
+
+                });
+            }
 
         }
         //crear el boton de siguiente ">"
