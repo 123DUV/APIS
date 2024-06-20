@@ -57,6 +57,7 @@ public class infoPoke extends javax.swing.JFrame {
             etqNombre.setText(nombre);
             llenarTabla();
             llenarTerrenos();
+            
 
         } catch (MalformedURLException ex) {
             System.out.println("Error en URL" + ex.getMessage());
