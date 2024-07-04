@@ -38,10 +38,10 @@ public class infoPoke extends javax.swing.JFrame {
         modelo = (DefaultTableModel) tablaNivel.getModel();
         modelo1 = (DefaultTableModel) tablaAtributos.getModel();
         modelo2 = (DefaultTableModel) tablaTipos.getModel();
-        modelo3 = (DefaultTableModel) tablaTerrenos.getModel();
+       
         llamar();
-         scroll4.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scroll4.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        llenarTerrenos();
+         
     }
 
     public void llamar() {
@@ -56,7 +56,7 @@ public class infoPoke extends javax.swing.JFrame {
 
             etqNombre.setText(nombre);
             llenarTabla();
-            llenarTerrenos();
+            
             
 
         } catch (MalformedURLException ex) {
@@ -125,14 +125,18 @@ public class infoPoke extends javax.swing.JFrame {
         JsonArray habilidades = list.getAsJsonArray("fields");
         System.out.println(habilidades);
         
-        modelo3.setRowCount(0);
+        
         for (int i = 0; i < habilidades.size(); i++) {
             JsonObject temp = habilidades.get(i).getAsJsonObject();
 
             String fieldd = temp.get("field").getAsString();
-
-            modelo3.addRow(new Object[]{fieldd});
+            String imagee = temp.get("image").getAsString();
+            System.out.println("nombre: "+fieldd+ "imagen: "+imagee);
+            terrenos2 ventanaTerrenos = new terrenos2(fieldd, imagee);
+           panelPrincipal.add(ventanaTerrenos);
         }
+        revalidate();
+        repaint();
     }
 
     @SuppressWarnings("unchecked")
@@ -148,8 +152,7 @@ public class infoPoke extends javax.swing.JFrame {
         tablaTipos = new javax.swing.JTable();
         jScrollPane3 = new javax.swing.JScrollPane();
         tablaAtributos = new javax.swing.JTable();
-        scroll4 = new javax.swing.JScrollPane();
-        tablaTerrenos = new javax.swing.JTable();
+        panelTerrenos = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -196,31 +199,21 @@ public class infoPoke extends javax.swing.JFrame {
         tablaAtributos.setToolTipText("");
         jScrollPane3.setViewportView(tablaAtributos);
 
-        tablaTerrenos.setFont(new java.awt.Font("Tempus Sans ITC", 2, 14)); // NOI18N
-        tablaTerrenos.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Terrenos"
-            }
-        ));
-        tablaTerrenos.setToolTipText("");
-        scroll4.setViewportView(tablaTerrenos);
+        javax.swing.GroupLayout panelTerrenosLayout = new javax.swing.GroupLayout(panelTerrenos);
+        panelTerrenos.setLayout(panelTerrenosLayout);
+        panelTerrenosLayout.setHorizontalGroup(
+            panelTerrenosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 345, Short.MAX_VALUE)
+        );
+        panelTerrenosLayout.setVerticalGroup(
+            panelTerrenosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 195, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout panelPrincipalLayout = new javax.swing.GroupLayout(panelPrincipal);
         panelPrincipal.setLayout(panelPrincipalLayout);
         panelPrincipalLayout.setHorizontalGroup(
             panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelPrincipalLayout.createSequentialGroup()
-                .addGroup(panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelPrincipalLayout.createSequentialGroup()
-                        .addGap(136, 136, 136)
-                        .addComponent(etqImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panelPrincipalLayout.createSequentialGroup()
-                        .addGap(155, 155, 155)
-                        .addComponent(etqNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(panelPrincipalLayout.createSequentialGroup()
                 .addGap(48, 48, 48)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -229,10 +222,18 @@ public class infoPoke extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(36, 36, 36))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelPrincipalLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(scroll4, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(93, 93, 93))
+            .addGroup(panelPrincipalLayout.createSequentialGroup()
+                .addGroup(panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelPrincipalLayout.createSequentialGroup()
+                        .addGap(136, 136, 136)
+                        .addComponent(etqImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panelPrincipalLayout.createSequentialGroup()
+                        .addGap(155, 155, 155)
+                        .addComponent(etqNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panelPrincipalLayout.createSequentialGroup()
+                        .addGap(97, 97, 97)
+                        .addComponent(panelTerrenos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelPrincipalLayout.setVerticalGroup(
             panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -246,16 +247,13 @@ public class infoPoke extends javax.swing.JFrame {
                         .addComponent(etqNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(etqImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(panelPrincipalLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelPrincipalLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addGap(58, 58, 58)
-                .addComponent(scroll4, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(153, 153, 153))
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(18, 18, 18)
+                .addComponent(panelTerrenos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(109, 109, 109))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -280,10 +278,9 @@ public class infoPoke extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPanel panelPrincipal;
-    private javax.swing.JScrollPane scroll4;
+    private javax.swing.JPanel panelTerrenos;
     private javax.swing.JTable tablaAtributos;
     private javax.swing.JTable tablaNivel;
-    private javax.swing.JTable tablaTerrenos;
     private javax.swing.JTable tablaTipos;
     // End of variables declaration//GEN-END:variables
 }

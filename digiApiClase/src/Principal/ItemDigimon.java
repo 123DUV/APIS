@@ -111,7 +111,7 @@ public class ItemDigimon extends javax.swing.JPanel {
 
     private void panelPrincipalMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelPrincipalMouseClicked
         infoPoke ventana = new infoPoke(digimon);
-        terrenos ventanaTerrenos = new terrenos(digimon);
+        
         
         
         System.out.println("click en: "+this.digimon.get("name").getAsString());
